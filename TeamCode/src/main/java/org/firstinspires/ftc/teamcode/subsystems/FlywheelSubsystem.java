@@ -24,7 +24,9 @@ public class FlywheelSubsystem {
     private FlywheelStuff hardware;
 
     public static boolean isRunning;
-    private double angle, vel, distance, p0, p1, error;
+    private double angle, vel,p0, p1, error;
+
+    public static double distance = 0;
 
     private PIDFController flywheelPIDF;
 
@@ -100,17 +102,19 @@ public class FlywheelSubsystem {
             Vector2d turret = robot.sub(Math.cos(h) * TURRETFROMCENTERINCH, Math.sin(h) * TURRETFROMCENTERINCH);
 
             double swmDist = hardware.effectiveDistance.getAsDouble();
-            // without swm
-            distance = Math.hypot(
-                    MatchDetails.target.x - turret.x,
-                    MatchDetails.target.y - turret.y
-            );
-
-            //with swm
-//            distance = (swmDist > 1e-3) ? swmDist : Math.hypot(
+//            // Tuning SWM
+//            // without swm
+//            distance = Math.hypot(
 //                    MatchDetails.target.x - turret.x,
 //                    MatchDetails.target.y - turret.y
 //            );
+//
+//            //with swm
+////            distance = (swmDist > 1e-3) ? swmDist : Math.hypot(
+////                    MatchDetails.target.x - turret.x,
+////                    MatchDetails.target.y - turret.y
+////            );
+
 
             /*
             if (robot.y < 48) {
