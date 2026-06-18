@@ -75,13 +75,18 @@ public class TurretSubsystem {
 
 
             double theta2 = Math.atan2(target.y - turret.y, target.x - turret.x);
-            double theta3 = hardware.swm.getTurretAngleDeg();
+            //double theta2 = Math.toRadians(-90);
+            double theta3;
+            // without swm
+            theta3 = h - theta2;
+            // with swm
+//            theta3 = hardware.swm.getTurretAngleDeg();
 
 
             double angle = MatchDetails.zeroToForwardAngle + theta3 + (theta2-Math.PI > h ? 2*Math.PI : 0);
 
 
-            double minAngle = -1.91986, maxAngle = 1.91986, minServoPos = 0, maxServoPos = 0.59;
+            double minAngle = Math.toRadians(-100), maxAngle = Math.toRadians(85), minServoPos = 0, maxServoPos = 0.59;
             double servoPos = ((angle-minAngle)/(maxAngle-minAngle)) * (maxServoPos-minServoPos) + minServoPos;
 
 

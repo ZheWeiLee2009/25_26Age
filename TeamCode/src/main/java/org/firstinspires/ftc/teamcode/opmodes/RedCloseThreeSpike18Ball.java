@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.utils.config.Constants;
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
-public class RedClose18 extends BaseAuto {
+public class RedCloseThreeSpike18Ball extends BaseAuto {
     @Override
     protected Alliance setColor() {
         return Alliance.RED;
@@ -46,7 +45,7 @@ public class RedClose18 extends BaseAuto {
                                 new Pose(130.000, 58.000)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(50), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(50), Math.toRadians(0), .4)
                 .build();
         PathChain  path2ndSpikeShot = follower.pathBuilder()
                 .addPath(
@@ -83,7 +82,7 @@ public class RedClose18 extends BaseAuto {
                 .setReversed()
                 .build();
 
-        PathChain FirstBalls = follower.pathBuilder()
+        PathChain FirstSpikeMark = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 shootingPose,
@@ -91,6 +90,9 @@ public class RedClose18 extends BaseAuto {
                         )
                 )
                 .setTangentHeadingInterpolation()
+                .build();
+
+        PathChain ShootFirstSpike = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Pose(125.000, 82.000),
@@ -101,6 +103,27 @@ public class RedClose18 extends BaseAuto {
                 .setReversed()
                 .build();
 
+        PathChain ThirdSpikeMark = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                shootingPose,
+                                new Pose(82, 26),
+                                new Pose(128, 35)
+                        )
+                )
+                .setLinearHeadingInterpolation(0, 0)
+                .build();
+
+        PathChain ShootThirdSpike = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(128, 35),
+                                shootingPose
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
         PathChain Finish = follower.pathBuilder()
                         .addPath(
                                 new BezierLine(
@@ -108,7 +131,7 @@ public class RedClose18 extends BaseAuto {
                                         new Pose(105, 82)
                                 )
                         )
-                        .setLinearHeadingInterpolation(-45, 0, 0.9)
+                        .setTangentHeadingInterpolation()
                         .build();
 
 
@@ -119,7 +142,7 @@ public class RedClose18 extends BaseAuto {
                 new ChangeStateAction(RobotState.SPEED_UP),
                 new FollowAction(FirstShotSOTM),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //2nd Spike Mark
@@ -129,7 +152,7 @@ public class RedClose18 extends BaseAuto {
                 new ChangeStateAction(RobotState.SPEED_UP),
                 new FollowAction(path2ndSpikeShot),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(450),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //1st Gate
@@ -140,7 +163,7 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(GateShot),
                 new SleepAction(450),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //2nd Gate
@@ -151,26 +174,29 @@ public class RedClose18 extends BaseAuto {
                 new FollowAction(GateShot),
                 new SleepAction(450),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //1st Spike
                 new ChangeStateAction(RobotState.INTAKE),
-                new FollowAction(FirstBalls),
+                new FollowAction(FirstSpikeMark),
                 new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(ShootFirstSpike),
+                new ChangeStateAction(RobotState.FIRE),
                 new SleepAction(500),
-                new ChangeStateAction(RobotState.FIRE),
-
-                //3rd Gate
-                new ChangeStateAction(RobotState.INTAKE),
-                new FollowAction(Gate, ()-> follower.getDistanceRemaining() < 8),
-                new SleepAction(1300),
-                new ChangeStateAction(RobotState.SPEED_UP),
-                new FollowAction(GateShot),
-                new SleepAction(450),
-                new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(450),
                 new ChangeStateAction(RobotState.IDLE),
+
+
+                //3rd Spike
+                new ChangeStateAction(RobotState.INTAKE),
+                new FollowAction(ThirdSpikeMark),
+                new ChangeStateAction(RobotState.SPEED_UP),
+                new FollowAction(ShootThirdSpike),
+                new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(500),
+                new ChangeStateAction(RobotState.IDLE),
+
+
 
                 //End Auto
                 new FollowAction(Finish)

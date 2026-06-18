@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.utils.config.Constants;
@@ -13,23 +12,25 @@ import org.firstinspires.ftc.teamcode.utils.control.actions.SleepAction;
 import org.firstinspires.ftc.teamcode.utils.enums.Alliance;
 import org.firstinspires.ftc.teamcode.utils.enums.RobotState;
 
-public class BlueClose18 extends BaseAuto {
+public class RedCloseTwoSpike18Ball extends BaseAuto {
     @Override
-    protected Alliance setColor() {return Alliance.BLUE;}
+    protected Alliance setColor() {
+        return Alliance.RED;
+    }
 
     @Override
     protected Pose setPose() {
-        return Constants.BLUE_CLOSE_INIT;
+        return Constants.RED_CLOSE_INIT;
     }
 
     @Override
     protected void setActionList() {
-        Pose shootingPose = new Pose(89, 84.000).mirror();
+        Pose shootingPose = new Pose(89, 84.000);
 
         PathChain FirstShotSOTM = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(121.000, 124.000).mirror(),
+                                new Pose(121.000, 124.000),
                                 shootingPose
                         )
                 )
@@ -40,17 +41,17 @@ public class BlueClose18 extends BaseAuto {
                 .addPath(
                         new BezierCurve(
                                 shootingPose,
-                                new Pose(82.000, 55.000).mirror(),
-                                new Pose(130.000, 58.000).mirror()
+                                new Pose(82.000, 55.000),
+                                new Pose(130.000, 58.000)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(50), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(50), Math.toRadians(0), .4)
                 .build();
         PathChain  path2ndSpikeShot = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(130.000, 58.000).mirror(),
-                                new Pose(104.000, 66.000).mirror(),
+                                new Pose(130.000, 58.000),
+                                new Pose(104.000, 66.000),
                                 shootingPose
                         )
                 )
@@ -62,8 +63,8 @@ public class BlueClose18 extends BaseAuto {
                 .addPath(
                         new BezierCurve(
                                 shootingPose,
-                                new Pose(106.000, 46.000).mirror(),
-                                new Pose(135.000, 64.000).mirror()
+                                new Pose(106.000, 46.000),
+                                new Pose(135.000, 64.000)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-48), Math.toRadians(30), .6)
@@ -73,7 +74,7 @@ public class BlueClose18 extends BaseAuto {
         PathChain GateShot = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(132.000, 57.000).mirror(),
+                                new Pose(132.000, 57.000),
                                 shootingPose
                         )
                 )
@@ -81,17 +82,20 @@ public class BlueClose18 extends BaseAuto {
                 .setReversed()
                 .build();
 
-        PathChain FirstBalls = follower.pathBuilder()
+        PathChain FirstSpikeMark = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 shootingPose,
-                                new Pose(125.000, 84.000).mirror()
+                                new Pose(125.000, 84.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
+                .build();
+
+        PathChain ShootFirstSpike = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(125.000, 82.000).mirror(),
+                                new Pose(125.000, 82.000),
                                 shootingPose
                         )
                 )
@@ -100,14 +104,14 @@ public class BlueClose18 extends BaseAuto {
                 .build();
 
         PathChain Finish = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                shootingPose,
-                                new Pose(105, 82).mirror()
+                        .addPath(
+                                new BezierLine(
+                                        shootingPose,
+                                        new Pose(105, 82)
+                                )
                         )
-                )
-                .setLinearHeadingInterpolation(-45, 0, 0.9)
-                .build();
+                        .setTangentHeadingInterpolation()
+                        .build();
 
 
 
@@ -117,7 +121,7 @@ public class BlueClose18 extends BaseAuto {
                 new ChangeStateAction(RobotState.SPEED_UP),
                 new FollowAction(FirstShotSOTM),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //2nd Spike Mark
@@ -127,7 +131,7 @@ public class BlueClose18 extends BaseAuto {
                 new ChangeStateAction(RobotState.SPEED_UP),
                 new FollowAction(path2ndSpikeShot),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(450),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //1st Gate
@@ -138,7 +142,7 @@ public class BlueClose18 extends BaseAuto {
                 new FollowAction(GateShot),
                 new SleepAction(450),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //2nd Gate
@@ -149,15 +153,18 @@ public class BlueClose18 extends BaseAuto {
                 new FollowAction(GateShot),
                 new SleepAction(450),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(400),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //1st Spike
                 new ChangeStateAction(RobotState.INTAKE),
-                new FollowAction(FirstBalls),
+                new FollowAction(FirstSpikeMark),
                 new ChangeStateAction(RobotState.SPEED_UP),
-                new SleepAction(500),
+                new FollowAction(ShootFirstSpike),
                 new ChangeStateAction(RobotState.FIRE),
+                new SleepAction(500),
+                new ChangeStateAction(RobotState.IDLE),
+
 
                 //3rd Gate
                 new ChangeStateAction(RobotState.INTAKE),
@@ -167,7 +174,7 @@ public class BlueClose18 extends BaseAuto {
                 new FollowAction(GateShot),
                 new SleepAction(450),
                 new ChangeStateAction(RobotState.FIRE),
-                new SleepAction(450),
+                new SleepAction(500),
                 new ChangeStateAction(RobotState.IDLE),
 
                 //End Auto

@@ -34,10 +34,10 @@ public class AutoSelect extends OpMode {
     }
 
     private enum CloseConfig {
-        ALL_SPIKE_12BALL("3 Spikes, 12 Balls"),
-        ALL_SPIKE_15BALL("3 Spikes, 18 Balls"),
-        TWO_SPIKE_12BALL("2 Spikes, 12 Balls"),
-        TWO_SPIKE_15BALL("2 Spikes, 15 Balls");
+        ALL_SPIKE_12BALL("3 Spikes, 12 Balls, 1 Clear, 0 Gate"),
+        TWO_SPIKE_18BALL("2 Spikes, 18 Balls, 3 Clears, 3 Gate"),
+        TWO_SPIKE_12BALL("2 Spikes, 12 Balls, 2 Clears, 1 Gate"),
+        THREE_SPIKE_18BALL("3 Spikes, 18 Balls, 2 Clears, 2 Gate");
 
         private String string;
         CloseConfig(String string) {
@@ -159,24 +159,27 @@ public class AutoSelect extends OpMode {
         switch (auto) {
             case RED_CLOSE -> {
                 switch (closeConfig) {
-                    case ALL_SPIKE_15BALL -> {
-                        return new RedClose18();
+                    case TWO_SPIKE_18BALL -> {
+                        return new RedCloseTwoSpike18Ball();
+                    }
+                    case THREE_SPIKE_18BALL -> {
+                        return new RedCloseThreeSpike18Ball();
                     }
                     default -> {
-                        return new RedClose12();
+                        return new RedCloseThreeSpike12Ball();
                     }
                 }
             }
             case BLUE_CLOSE -> {
                 switch (closeConfig) {
-                    case ALL_SPIKE_12BALL -> {
-                        return new BlueCloseAuto();
+                    case TWO_SPIKE_18BALL -> {
+                        return new BlueCloseTwoSpike18Ball();
                     }
-                    case ALL_SPIKE_15BALL -> {
-                        return new BlueClose18();
+                    case THREE_SPIKE_18BALL -> {
+                        return new BlueCloseThreeSpike18Ball();
                     }
                     default -> {
-                        return new BlueCloseAuto();
+                        return new BlueCloseThreeSpike12Ball();
                     }
                 }
             }

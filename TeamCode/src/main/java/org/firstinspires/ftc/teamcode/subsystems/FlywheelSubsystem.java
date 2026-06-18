@@ -49,23 +49,26 @@ public class FlywheelSubsystem {
         p1 = 45;
 
         flywheelVelocityRegression = new InterpLUT();
-        flywheelVelocityRegression.add(0,0);
-        flywheelVelocityRegression.add(5,0);
-        flywheelVelocityRegression.add(10,0);
-        flywheelVelocityRegression.add(15,0);
-        flywheelVelocityRegression.add(20,0);
-        flywheelVelocityRegression.add(25,0);
-        flywheelVelocityRegression.add(30,0);
-        flywheelVelocityRegression.add(35,0);
-        flywheelVelocityRegression.add(40,0);
-        flywheelVelocityRegression.add(45,0);
-        flywheelVelocityRegression.add(50, 0);
-        flywheelVelocityRegression.add(55, 0);
-        flywheelVelocityRegression.add(60,0);
-        flywheelVelocityRegression.add(65, 0);
-        flywheelVelocityRegression.add(70,0);
+        flywheelVelocityRegression.add(-1,0);
+        flywheelVelocityRegression.add(41,1200);
+        flywheelVelocityRegression.add(50,1345);
+        flywheelVelocityRegression.add(60,1395);
+        flywheelVelocityRegression.add(68,1450);
+        flywheelVelocityRegression.add(77,1515);
+        flywheelVelocityRegression.add(84,1595);
+        flywheelVelocityRegression.add(94,1725);
+        flywheelVelocityRegression.add(105,1800);
+        flywheelVelocityRegression.add(1000,1800);
         flywheelVelocityRegression.createLUT();
 
+        hoodAngleRegression = new InterpLUT();
+        hoodAngleRegression.add(-1, 0);
+        hoodAngleRegression.add(41, .3);
+        hoodAngleRegression.add(50, .4);
+        hoodAngleRegression.add(60, .75);
+        hoodAngleRegression.add(68, 1);
+        hoodAngleRegression.add(1000, 1);
+        hoodAngleRegression.createLUT();
 
         v_projectileRegression = new InterpLUT();
         v_projectileRegression.add(0,0);
@@ -97,16 +100,24 @@ public class FlywheelSubsystem {
             Vector2d turret = robot.sub(Math.cos(h) * TURRETFROMCENTERINCH, Math.sin(h) * TURRETFROMCENTERINCH);
 
             double swmDist = hardware.effectiveDistance.getAsDouble();
-            distance = (swmDist > 1e-3) ? swmDist : Math.hypot(
+            // without swm
+            distance = Math.hypot(
                     MatchDetails.target.x - turret.x,
                     MatchDetails.target.y - turret.y
             );
+
+            //with swm
+//            distance = (swmDist > 1e-3) ? swmDist : Math.hypot(
+//                    MatchDetails.target.x - turret.x,
+//                    MatchDetails.target.y - turret.y
+//            );
+
             /*
             if (robot.y < 48) {
                 angle = 53;
                 hardware.hood.setPosition(0.86);
             } else if (48 < robot.y && robot.y < 97) {
-                hardware.hood.setPosition(.25);
+//                hardware.hood.setPosition(.25);
 
             }else {
                 angle = 69;
@@ -126,11 +137,13 @@ public class FlywheelSubsystem {
                 if (robot.y < 45) {
                     targetVel = 12.45*vel+1510.69207;
                 } else {
-                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14568.9);
+                    targetVel = (-0.313775*vel*vel*vel)+(34.18666*vel*vel)-(1187.99914*vel)+(14570);
                 }
             }*/
 
             targetVel = flywheelVelocityRegression.get(distance);
+            double hoodAngle = hoodAngleRegression.get(distance);
+
 
             error = targetVel - hardware.speed.getAsDouble();
 
@@ -141,10 +154,11 @@ public class FlywheelSubsystem {
             }
             double power = flywheelPIDF.calculate(error) + (f * velToPower(targetVel));
             if (targetVel == 0) power = 0;
-//            if (-(2*c)/Math.tan(w) > distance) power = 0;
+            //if (-(2*c)/Math.tan(w) > distance) power = 0;
             if (velToPowerTune) power = targetVel;
             hardware.motor1.setPower(power);
             hardware.motor2.setPower(power);
+            hardware.hood.setPosition(hoodAngle);
         } else {
             hardware.motor1.setPower(0);
             hardware.motor2.setPower(0);
